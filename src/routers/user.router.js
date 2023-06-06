@@ -1,3 +1,5 @@
+//******** LA MODULARIZACION NOS AYUDA A VOLVER EL CODIGO MUCHO MAS LEGIBLE / SE ESCALA MUCHA MAS EL PROYECTO  **************
+
 // ***-> Estructura del Archivo src/routers/user.router.js - 1. AL PRINCIPIO importacion de la funcionalidad ROUTER incluida en la libreria EXPRESS
 import { Router } from 'express'
 

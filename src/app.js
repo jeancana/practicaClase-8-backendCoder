@@ -1,15 +1,20 @@
+// ************** CREANDO UNA API PARA GESTIONAR USUARIOS **************
+
 // Estructura del Archivo src/app.js - 1. AL PRINCIPIO importacion de la libreria express
 import express from 'express'
 
 // Estructura del Archivo src/app.js - 1.1 AL PRINCIPIO importamos el archivo /user.router.js
 import userRouter from './routers/user.router.js'
 
+// Estructura del Archivo src/app.js - 1.2 AL PRINCIPIO importamos el archivo /pets.router.js
+import petRouter from './routers/pet.router.js'
+
 // Estructura del Archivo src/app.js - 2. AL CENTRO la Ejecucion de la libreria Express  
 const app = express()
 app.use(express.json())
 
 // Estructura del Archivo src/app.js - 3. EN EL MEDIO DE TODO se escriben y ejecutan todos los endpoints
-  
+
 //endpoint - Raiz '/' - este siempre va - hace referencia al http://localhost:8080/
 app.get('/', (req, res) => res.send('ok'))
 //endpoint - '/health' - este siempre va 
@@ -47,8 +52,34 @@ C) Crear el primer Router para el Entidad "user" --- "src/routers/user.router.js
 
 // ACTIVANDO EL USO DEL ROUTER PARA 'user' desde src/app.js
 // Esto significa que en el endpoint '/users' USA los metodos (endpoints) creador en el router "userRouter" (routes de usuarios - creado en 'user.router.js')
-app.use('/users', userRouter)
 
+// Estructura Primaria de un middelware - se le agrega la funcion next()
+// la funcion next() es la funcion que se debe ejecutar antes terminar la funcion middelware 
+// OJO: importante siempre colocar el "next()"" dentro de la funcion xq SINO nunca recibire respuesta en la ruta por el thunderclient al probarla 
+const middelware1 = (res, req, next) => {
+    console.log('Soy un middleware 1')
+    // el next() le da el pase al router, sino se coloca esto dentro de la funciona nunca podra funcionar la ruta (endpoint)
+    // los middelware se usa por ejemplo para validar un usuario antes de darle acceso a la ruta (endpoint)
+    next()
+}
+// Ejemplo para validar un error con middelware 
+
+// harcodeando el Error para probarlo en el endpoint '/pets' - lo coloco en true para afirmar que existe el error 
+// y no deja pasar al endpoint - cuenta como una consulta la API
+const error = true
+
+const middelware2 = (req, res, next) => {
+    console.log('Soy un middleware 2')
+    if (error) return res.status(400).json({ error: 'Hubo un error'})
+    next()
+}
+
+// se denomina middelwares xq se la coloco en el medio (en medio)
+// Antes de alguien solicite algo a la ruta user (userRouter), prime se va a ejecutar el middelware1 por eso su nombre
+app.use('/users',middelware1, userRouter)
+
+// ACTIVANDO EL USO DEL ROUTER PARA 'pet' desde src/app.js
+app.use('/pets',middelware1,middelware2, petRouter)
 
 // Estructura del Archivo src/app.js - 4. FINALIZA CON EL SERVIDOR AL FINAL DE LAS LINEA DE CODIGO SIEMPRE ESCUCHANDO
 app.listen(8080, () => console.log('Server up'))

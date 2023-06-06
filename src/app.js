@@ -6,6 +6,7 @@ import userRouter from './routers/user.router.js'
 
 // Estructura del Archivo src/app.js - 2. AL CENTRO la Ejecucion de la libreria Express  
 const app = express()
+app.use(express.json())
 
 // Estructura del Archivo src/app.js - 3. EN EL MEDIO DE TODO se escriben y ejecutan todos los endpoints
   
